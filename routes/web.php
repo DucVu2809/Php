@@ -25,8 +25,9 @@ $router = new Router();
 $router->get('/',            [HomeController::class, 'index']);
 $router->get('/gioi-thieu',  [HomeController::class, 'about']);
 $router->get('/lien-he',     [HomeController::class, 'contact']);
-$router->get('/tin-tuc',     [HomeController::class, 'news']);
-$router->get('/khuyen-mai',  [HomeController::class, 'promotion']);
+$router->get('/bao-hanh',    [HomeController::class, 'warranty']);
+$router->get('/doi-tra',     [HomeController::class, 'returns']);
+$router->get('/huong-dan',   [HomeController::class, 'guide']);
 
 $router->get('/san-pham',        [ProductController::class, 'index']);
 $router->post('/danh-gia',       [ProductController::class, 'review']);

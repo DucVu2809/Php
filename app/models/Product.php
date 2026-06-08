@@ -52,24 +52,6 @@ class Product extends Model
         $stmt->execute();
         return $stmt->fetchAll();
     }
-    public function promotions(int $limit = 20): array
-{
-    $sql = "SELECT p.*, b.name AS brand_name
-            FROM products p
-            LEFT JOIN brands b ON b.id = p.brand_id
-            WHERE p.is_active = 1
-            AND p.sale_price IS NOT NULL
-            AND p.sale_price > 0
-            AND p.sale_price < p.price
-            ORDER BY p.created_at DESC
-            LIMIT :limit";
-
-    $stmt = Database::connection()->prepare($sql);
-    $stmt->bindValue('limit', $limit, \PDO::PARAM_INT);
-    $stmt->execute();
-
-    return $stmt->fetchAll();
-}
 
     /**
      * Lấy sản phẩm theo bộ lọc + phân trang.
@@ -184,9 +166,13 @@ class Product extends Model
         $where = '1';
         $params = [];
         if ($keyword !== '') {
-            $where = '(p.name LIKE :kw OR p.sku LIKE :kw)';
-            $params['kw'] = '%' . $keyword . '%';
-        }
+            $where = '(p.name LIKE :kw_name OR p.sku LIKE :kw_sku)';
+
+            $like = '%' . $keyword . '%';
+
+            $params['kw_name'] = $like;
+             $params['kw_sku']  = $like;
+            }
         $sql = "SELECT p.*, c.name AS category_name, b.name AS brand_name
                 FROM `products` p
                 LEFT JOIN `categories` c ON c.id = p.category_id

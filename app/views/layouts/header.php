@@ -123,8 +123,8 @@ $isHome = ('/' . trim((string) $headerPath, '/') === '/');
         <ul class="mainnav__menu">
             <li><a href="<?= url('/') ?>">Trang chủ</a></li>
             <li><a href="<?= url('san-pham') ?>">Sản phẩm</a></li>
-            <li><a href="<?= url('khuyen-mai') ?>">Khuyến mãi</a></li>
-            <li><a href="<?= url('tin-tuc') ?>">Tin tức</a></li>
+            <li><a href="<?= url('san-pham') ?>">Khuyến mãi</a></li>
+            <li><a href="<?= url('gioi-thieu') ?>">Tin tức</a></li>
             <li><a href="<?= url('lien-he') ?>">Liên hệ</a></li>
             <li><a href="<?= url('gioi-thieu') ?>">Giới thiệu</a></li>
         </ul>

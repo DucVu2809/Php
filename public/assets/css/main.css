@@ -271,4 +271,3 @@ body.home .mainnav__caret { display: none; }
 @media (max-width: 480px) {
     .footer__grid { grid-template-columns: 1fr; }
 }
-
