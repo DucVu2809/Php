@@ -99,4 +99,30 @@ class Order extends Model
             ['s' => $status]
         )->fetch()['c'];
     }
+    /**
+     * Tự động trừ hoặc cộng trả kho hàng dựa trên sản phẩm trong đơn
+     * @param int $orderId ID của đơn hàng
+     * @param string $action 'decrease' (trừ kho) hoặc 'increase' (cộng kho)
+     */
+    public function updateInventory(int $orderId, string $action): void
+    {
+        // Tái sử dụng hàm items() đang có sẵn trong Model này
+        $items = $this->items($orderId); 
+        
+        foreach ($items as $item) {
+            if ($action === 'decrease') {
+                // Lệnh giảm kho: GREATEST giúp stock không bao giờ bị âm dưới 0
+                $sql = "UPDATE `products` SET `stock` = GREATEST(0, `stock` - :qty) WHERE `id` = :id";
+            } else {
+                // Lệnh tăng kho: Cộng trả lại hàng khi hủy đơn
+                $sql = "UPDATE `products` SET `stock` = `stock` + :qty WHERE `id` = :id";
+            }
+            
+            // Thực thi lệnh SQL trực tiếp vào Database
+            \App\Core\Database::run($sql, [
+                'qty' => (int) $item['quantity'], 
+                'id'  => (int) $item['product_id'] 
+            ]);
+        }
+    }
 }

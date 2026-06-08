@@ -45,18 +45,4 @@ class HomeController extends Controller
     {
         $this->view('pages/contact', ['pageTitle' => 'Liên hệ']);
     }
-    public function warranty()
-    {
-    $this->view('pages/bao-hanh', ['pageTitle' => 'Chính sách bảo hành']);
-    }
-
-    public function returns()
-    {
-    $this->view('pages/doi-tra', ['pageTitle' => 'Chính sách đổi trả']);
-    }
-
-    public function guide()
-    {
-    $this->view('pages/huong-dan', ['pageTitle' => 'Hướng dẫn mua hàng']);
-    }
 }

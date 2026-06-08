@@ -95,21 +95,17 @@ if (empty($gallery)) {
                 <input id="buyQty" type="number" value="1" min="1" max="<?= max(1, (int) $product['stock']) ?>">
                 <button type="button" data-qty="1">+</button>
             </div>
+            
             <button class="btn btn-primary btn-lg" data-add-to-cart
                     data-id="<?= (int) $product['id'] ?>" data-qty-source="#buyQty">
                 <i class="fa-solid fa-cart-plus"></i> Thêm vào giỏ
-           <button
-    type="button"
-    id="buyNowBtn"
-    class="btn btn-accent btn-lg"
-    data-add-to-cart
-    data-id="<?= (int)$product['id'] ?>"
-    data-qty-source="#buyQty">
-    <i class="fa-solid fa-bolt"></i>
-    Mua ngay
-</button>
-
             </button>
+            
+            <button type="button" class="btn btn-accent btn-lg btn-buy-now" data-add-to-cart
+                    data-id="<?= (int) $product['id'] ?>" data-qty-source="#buyQty">
+                <i class="fa-solid fa-bolt"></i> Mua ngay
+            </button>
+        </div>
 
         <div class="detail__policy">
             <div><i class="fa-solid fa-shield-halved"></i> Bảo hành chính hãng</div>

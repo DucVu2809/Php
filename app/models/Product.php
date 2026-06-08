@@ -164,21 +164,25 @@ class Product extends Model
     public function adminAll(string $keyword = ''): array
     {
         $where = '1';
-        $params = [];
+        $params = []; // Khởi tạo mảng tuần tự không chứa Key dạng chữ
+
         if ($keyword !== '') {
-            $where = '(p.name LIKE :kw_name OR p.sku LIKE :kw_sku)';
+            // Sử dụng 2 dấu hỏi chấm riêng biệt cho Tên và SKU
+            $where = '(p.name LIKE ? OR p.sku LIKE ?)';
+            
+            // Đẩy đúng 2 tham số giá trị vào mảng theo thứ tự
+            $params[] = '%' . $keyword . '%';
+            $params[] = '%' . $keyword . '%';
+        }
 
-            $like = '%' . $keyword . '%';
-
-            $params['kw_name'] = $like;
-             $params['kw_sku']  = $like;
-            }
         $sql = "SELECT p.*, c.name AS category_name, b.name AS brand_name
                 FROM `products` p
                 LEFT JOIN `categories` c ON c.id = p.category_id
                 LEFT JOIN `brands` b ON b.id = p.brand_id
                 WHERE {$where}
                 ORDER BY p.id DESC";
+
+        // Gọi lại hàm chạy query chuẩn của hệ thống
         return Database::run($sql, $params)->fetchAll();
     }
 
@@ -207,6 +211,12 @@ class Product extends Model
     {
         $where  = ['p.is_active = 1'];
         $params = [];
+
+        // LỌC SẢN PHẨM KHUYẾN MÃI: Kiểm tra xem có yêu cầu sắp xếp/lọc theo 'sale' không
+        if (!empty($filters['sort']) && $filters['sort'] === 'sale') {
+            // Điều kiện: sale_price phải tồn tại, lớn hơn 0 và nhỏ hơn giá gốc (price)
+            $where[] = 'p.sale_price IS NOT NULL AND p.sale_price > 0 AND p.sale_price < p.price';
+        }
 
         if (!empty($filters['category_id'])) {
             $where[]               = 'p.category_id = :category_id';
@@ -246,6 +256,8 @@ class Product extends Model
             'price_desc' => 'COALESCE(p.sale_price, p.price) DESC',
             'name_asc'   => 'p.name ASC',
             'popular'    => 'p.views DESC',
+            'sale'       => '(p.price - p.sale_price) DESC',
+            
             default      => 'p.is_featured DESC, p.created_at DESC',
         };
     }

@@ -25,6 +25,7 @@ class AdminController extends Controller
 
     public function dashboard(): void
     {
+        \App\Models\Notification::markAllAsRead();
         $orderModel = new Order();
         $productModel = new Product();
 
@@ -80,8 +81,36 @@ class AdminController extends Controller
             $_SESSION['_old'] = $_POST;
             $this->redirect('/admin/san-pham/them');
         }
-        (new Product())->create($data);
-        flash('success', 'Đã thêm sản phẩm mới.');
+
+        $productModel = new Product();
+        $existingProduct = null;
+
+        // 1. Kiểm tra xem sản phẩm đã tồn tại dựa vào SKU hoặc Tên
+        if (!empty($data['sku'])) {
+            $existingProduct = $productModel->findBy('sku', $data['sku']);
+        } else {
+            $existingProduct = $productModel->findBy('name', $data['name']);
+        }
+
+        // 2. Nếu sản phẩm ĐÃ TỒN TẠI -> Tiến hành cộng dồn số lượng tồn kho (stock)
+        if ($existingProduct !== null) {
+            $oldStock = (int) $existingProduct['stock'];
+            $addedStock = (int) $data['stock'];
+            $newStock = $oldStock + $addedStock;
+
+            // Cập nhật lại số lượng tồn kho mới cho sản phẩm cũ
+            $productModel->update((int) $existingProduct['id'], [
+                'stock' => $newStock
+            ]);
+
+            flash('success', 'Sản phẩm đã tồn tại. Hệ thống tự động cộng dồn thêm ' . $addedStock . ' vào kho hàng (Tổng tồn: ' . $newStock . ').');
+        } 
+        // 3. Nếu sản phẩm CHƯA TỒN TẠI -> Tạo mới hoàn toàn như cũ
+        else {
+            $productModel->create($data);
+            flash('success', 'Đã thêm sản phẩm mới.');
+        }
+
         $this->redirect('/admin/san-pham');
     }
 
@@ -149,11 +178,37 @@ class AdminController extends Controller
     public function orderStatus(string $id): void
     {
         $allowed = ['pending', 'confirmed', 'shipping', 'completed', 'cancelled'];
-        $status = $_POST['status'] ?? 'pending';
+        $status  = $_POST['status'] ?? 'pending'; // Trạng thái mới Admin vừa click chọn
+
         if (in_array($status, $allowed, true)) {
-            (new Order())->updateStatus((int) $id, $status);
-            flash('success', 'Đã cập nhật trạng thái đơn hàng.');
+            $orderModel = new Order();
+            
+            // 1. Tìm đơn hàng hiện tại để lấy ra trạng thái CŨ trước khi lưu
+            $order = $orderModel->find((int) $id);
+
+            if ($order !== null) {
+                $oldStatus = $order['status'] ?? ''; // Trạng thái cũ trong DB
+
+                // Chỉ xử lý kho nếu Admin thực sự đổi sang trạng thái khác
+                if ($oldStatus !== $status) {
+                    
+                    // NẾU CHUYỂN SANG HOÀN THÀNH -> TRỪ KHO
+                    if ($status === 'completed') {
+                        $orderModel->updateInventory((int) $id, 'decrease');
+                    } 
+                    
+                    // NẾU ĐƠN ĐÃ HOÀN THÀNH MÀ BỊ HỦY -> CỘNG TRẢ KHO
+                    elseif ($status === 'cancelled' && $oldStatus === 'completed') {
+                        $orderModel->updateInventory((int) $id, 'increase');
+                    }
+                }
+            }
+
+            // 2. Lưu trạng thái mới vào Database như cũ
+            $orderModel->updateStatus((int) $id, $status);
+            flash('success', 'Đã cập nhật trạng thái đơn hàng và biến động kho.');
         }
+        
         $this->redirect('/admin/don-hang');
     }
 

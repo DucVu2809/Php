@@ -10,6 +10,7 @@ use App\Core\Controller;
 use App\Models\Coupon;
 use App\Models\Order;
 use App\Requests\CheckoutRequest;
+use App\Helpers\MailHelper;
 
 class OrderController extends Controller
 {
@@ -109,6 +110,29 @@ class OrderController extends Controller
             'payment_method'   => $payment,
             'status'           => 'pending',
         ], $items);
+
+        $emailNhan = trim($_POST['customer_email'] ?? '');
+        $tenKhach = trim($_POST['customer_name'] ?? 'Quý khách');
+
+        // Chỉ gửi mail nếu khách hàng có nhập email hợp lệ
+        if ($emailNhan !== '' && filter_var($emailNhan, FILTER_VALIDATE_EMAIL)) {
+            // Gọi hàm từ file MailHelper bạn vừa tạo ở Bước 3
+            MailHelper::sendOrderConfirmation(
+                $emailNhan, 
+                $tenKhach, 
+                $code, 
+                $total,
+                trim($_POST['customer_phone'] ?? ''),  // SỬA THÀNH: customer_phone thay vì phone
+                trim($_POST['customer_address'] ?? ''),    // Truyền thêm Địa chỉ
+                $payment
+            );
+        }
+        $sqlNotification = "INSERT INTO `notifications` (title, message) VALUES (?, ?)";
+        $formattedTotal = number_format($total, 0, ',', '.') . ' VNĐ';
+        
+        $msg = "Khách hàng <b>{$tenKhach}</b> vừa đặt đơn hàng mới <b>#{$code}</b>. Tổng giá trị: <b>{$formattedTotal}</b>.";
+        
+        \App\Core\Database::run($sqlNotification, ['Đơn hàng mới', $msg]);
 
         Cart::clear();
         unset($_SESSION['coupon'], $_SESSION['_old']);
