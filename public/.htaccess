@@ -1,0 +1,18 @@
+# Điều hướng mọi request (trừ file/thư mục có thật) về front controller index.php
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Nếu đặt app trong thư mục con, có thể cần chỉnh RewriteBase, vd: RewriteBase /ProjectPHP/public/
+    # RewriteBase /
+
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    RewriteRule ^ index.php [QSA,L]
+</IfModule>
+
+# Chặn truy cập trực tiếp các file nhạy cảm
+<FilesMatch "\.(sql|md|log)$">
+    Require all denied
+</FilesMatch>

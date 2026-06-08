@@ -1,0 +1,16 @@
+# =============================================================
+#  .htaccess GỐC DỰ ÁN
+#  Mục đích: đặt cả thư mục dự án vào XAMPP/htdocs rồi vào
+#  http://localhost/ProjectPHP/ là ra trang chủ ngay,
+#  KHÔNG cần gõ thêm "/public" và CSS/ảnh vẫn nạp đúng.
+# =============================================================
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # 1) Trang gốc (http://localhost/ProjectPHP/) -> chạy front controller trong /public
+    RewriteRule ^$ public/index.php [L]
+
+    # 2) Mọi đường dẫn còn lại (route, css, js, ảnh...) -> nối tiền tố public/
+    #    Sau đó public/.htaccess tự quyết định: file thật thì phục vụ, còn lại đẩy vào index.php
+    RewriteRule ^(.+)$ public/$1 [L]
+</IfModule>
