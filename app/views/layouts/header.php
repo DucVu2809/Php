@@ -79,6 +79,20 @@ $isHome = ('/' . trim((string) $headerPath, '/') === '/');
                 <span class="cart-link__badge" id="cart-count"><?= Cart::totalQuantity() ?></span>
                 <span class="cart-link__label">Giỏ hàng</span>
             </a>
+            <?php if (\App\Core\Auth::check() && \App\Core\Auth::isAdmin()): ?>
+                <?php $unreadCount = \App\Models\Notification::countUnread(); ?>
+                <a class="cart-link notification-bell" href="<?= url('admin') ?>" 
+                   onclick="const b = this.querySelector('.cart-link__badge'); if(b) b.remove();" 
+                   style="margin-left: 10px; position: relative;">
+                    <i class="fa-solid fa-bell"></i>
+                    <?php if ($unreadCount > 0): ?>
+                        <span class="cart-link__badge" style="background-color: #ff4d4f; color: white;">
+                            <?= $unreadCount ?>
+                        </span>
+                    <?php endif; ?>
+                    <span class="cart-link__label">Thông báo</span>
+                </a>
+            <?php endif; ?>
         </div>
     </div>
 </header>
@@ -123,7 +137,7 @@ $isHome = ('/' . trim((string) $headerPath, '/') === '/');
         <ul class="mainnav__menu">
             <li><a href="<?= url('/') ?>">Trang chủ</a></li>
             <li><a href="<?= url('san-pham') ?>">Sản phẩm</a></li>
-            <li><a href="<?= url('san-pham') ?>">Khuyến mãi</a></li>
+            <li><a href="<?= url('san-pham') ?>?sort=sale" class="<?= (isset($_GET['sort']) && $_GET['sort'] === 'sale') ? 'active' : '' ?>">Khuyến mãi</a></li>
             <li><a href="<?= url('gioi-thieu') ?>">Tin tức</a></li>
             <li><a href="<?= url('lien-he') ?>">Liên hệ</a></li>
             <li><a href="<?= url('gioi-thieu') ?>">Giới thiệu</a></li>

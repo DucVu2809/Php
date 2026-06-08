@@ -98,6 +98,7 @@ $priceRanges = [
                     'price_desc' => 'Giá cao → thấp',
                     'name_asc'   => 'Tên A → Z',
                     'popular'    => 'Xem nhiều',
+                    'sale'       => 'For sale',
                 ];
                 foreach ($sorts as $key => $label): ?>
                     <a class="sort-chip <?= $currentSort === $key ? 'active' : '' ?>"
