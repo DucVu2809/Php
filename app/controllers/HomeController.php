@@ -45,27 +45,18 @@ class HomeController extends Controller
     {
         $this->view('pages/contact', ['pageTitle' => 'Liên hệ']);
     }
+    public function warranty()
+    {
+    $this->view('pages/bao-hanh', ['pageTitle' => 'Chính sách bảo hành']);
+    }
 
-    /**
- * Trang tin tức.
- */
-public function news(): void
-{
-    $this->view('pages/news', [
-        'pageTitle' => 'Tin tức'
-    ]);
-}
+    public function returns()
+    {
+    $this->view('pages/doi-tra', ['pageTitle' => 'Chính sách đổi trả']);
+    }
 
-/**
- * Trang khuyến mãi.
- */
-public function promotion(): void
-{
-    $productModel = new Product();
-
-    $this->view('pages/promotion', [
-        'pageTitle' => 'Khuyến mãi',
-        'products'  => $productModel->promotions(50)
-    ]);
-}
+    public function guide()
+    {
+    $this->view('pages/huong-dan', ['pageTitle' => 'Hướng dẫn mua hàng']);
+    }
 }

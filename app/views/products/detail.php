@@ -98,11 +98,18 @@ if (empty($gallery)) {
             <button class="btn btn-primary btn-lg" data-add-to-cart
                     data-id="<?= (int) $product['id'] ?>" data-qty-source="#buyQty">
                 <i class="fa-solid fa-cart-plus"></i> Thêm vào giỏ
+           <button
+    type="button"
+    id="buyNowBtn"
+    class="btn btn-accent btn-lg"
+    data-add-to-cart
+    data-id="<?= (int)$product['id'] ?>"
+    data-qty-source="#buyQty">
+    <i class="fa-solid fa-bolt"></i>
+    Mua ngay
+</button>
+
             </button>
-            <a class="btn btn-accent btn-lg" href="<?= url('gio-hang') ?>">
-                <i class="fa-solid fa-bolt"></i> Mua ngay
-            </a>
-        </div>
 
         <div class="detail__policy">
             <div><i class="fa-solid fa-shield-halved"></i> Bảo hành chính hãng</div>

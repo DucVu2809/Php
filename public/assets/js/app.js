@@ -1,4 +1,4 @@
-/* =============================================================
+/* =============================================================BASE 
    XINMAI - app.js
    Tương tác phía client: thêm/sửa/xoá giỏ hàng (AJAX), bộ chọn số lượng,
    thông báo toast. Viết bằng JavaScript thuần, không phụ thuộc thư viện.
@@ -44,32 +44,51 @@
 
     // ----- Thêm vào giỏ hàng -------------------------------------------------
     document.addEventListener('click', function (e) {
-        var btn = e.target.closest('[data-add-to-cart]');
-        if (!btn) { return; }
-        e.preventDefault();
 
-        var id = btn.getAttribute('data-id');
-        var qty = 1;
-        var src = btn.getAttribute('data-qty-source');
-        if (src) {
-            var input = document.querySelector(src);
-            if (input) { qty = parseInt(input.value, 10) || 1; }
+    var btn = e.target.closest('[data-add-to-cart]');
+    if (!btn) { return; }
+
+    e.preventDefault();
+
+    var id = btn.getAttribute('data-id');
+    var qty = 1;
+
+    var src = btn.getAttribute('data-qty-source');
+    if (src) {
+        var input = document.querySelector(src);
+        if (input) {
+            qty = parseInt(input.value, 10) || 1;
+        }
+    }
+
+    btn.disabled = true;
+
+    postForm('/gio-hang/them', {
+        product_id: id,
+        quantity: qty
+    })
+    .then(function (res) {
+
+        if (res.ok) {
+            setCartCount(res.cartCount);
+            toast(res.message || 'Đã thêm vào giỏ hàng.');
+            // 👉 NẾU LÀ MUA NGAY THÌ CHUYỂN TRANG
+            if (btn.id === 'buyNowBtn') {
+                  window.location.href = BASE + '/gio-hang';
+            }
+        } else {
+            toast(res.message || 'Có lỗi xảy ra.', true);
         }
 
-        btn.disabled = true;
-        postForm('/gio-hang/them', { product_id: id, quantity: qty })
-            .then(function (res) {
-                if (res.ok) {
-                    setCartCount(res.cartCount);
-                    toast(res.message || 'Đã thêm vào giỏ hàng.');
-                } else {
-                    toast(res.message || 'Có lỗi xảy ra.', true);
-                }
-            })
-            .catch(function () { toast('Không kết nối được máy chủ.', true); })
-            .finally(function () { btn.disabled = false; });
+    })
+    .catch(function () {
+        toast('Không kết nối được máy chủ.', true);
+    })
+    .finally(function () {
+        btn.disabled = false;
     });
 
+});
     // ----- Bộ chọn số lượng ở trang chi tiết --------------------------------
     document.addEventListener('click', function (e) {
         var btn = e.target.closest('[data-qty]');

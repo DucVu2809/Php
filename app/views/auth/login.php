@@ -33,6 +33,7 @@
                 </button>
             </form>
             <p class="authbox__alt">Chưa có tài khoản? <a href="<?= url('dang-ky') ?>">Đăng ký ngay</a></p>
+            <p class="authbox__demo"><i class="fa-solid fa-circle-info"></i> Tài khoản admin demo: <strong>admin@xinmai.vn</strong> / <strong>admin123</strong></p>
         </div>
     </div>
 </div>

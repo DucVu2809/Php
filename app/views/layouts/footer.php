@@ -38,9 +38,9 @@ $footerCats = (new Category())->active();
             <ul>
                 <li><a href="<?= url('gioi-thieu') ?>">Giới thiệu</a></li>
                 <li><a href="<?= url('lien-he') ?>">Liên hệ</a></li>
-                <li><a href="#">Chính sách bảo hành</a></li>
-                <li><a href="#">Chính sách đổi trả</a></li>
-                <li><a href="#">Hướng dẫn mua hàng</a></li>
+                <li><a href="<?= url('bao-hanh') ?>">Chính sách bảo hành</a></li>
+                <li><a href="<?= url('doi-tra') ?>">Chính sách đổi trả</a></li>
+                <li><a href="<?= url('huong-dan') ?>">Hướng dẫn mua hàng</a></li>
             </ul>
         </div>
 
@@ -57,7 +57,7 @@ $footerCats = (new Category())->active();
 
     <div class="footer__bottom">
         <div class="container">
-            © <?= date('Y') ?> XINMAI - Tổng kho máy xây dựng.
+            © <?= date('Y') ?> XINMAI - Tổng kho máy xây dựng. 
         </div>
     </div>
 </footer>
